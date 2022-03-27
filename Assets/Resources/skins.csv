@@ -1,0 +1,5 @@
+name,healthy,id,price
+default,False,0,0
+yinyang,False,1,10000
+pokeball,False,2,100000
+dragonball,False,3,1000000
