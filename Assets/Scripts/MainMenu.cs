@@ -6,6 +6,8 @@ using UnityEngine.XR.ARFoundation;
 
 public class MainMenu : MonoBehaviour
 {
+    //COMMENT:23/03/2022:HEURTEL: Loads the desired scene
+
     public void StartGame()
     {
         SceneManager.LoadSceneAsync("SampleScene");

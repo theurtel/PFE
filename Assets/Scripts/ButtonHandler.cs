@@ -7,11 +7,12 @@ using UnityEngine.EventSystems;
 public class ButtonHandler : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
 {
     [SerializeField]
-    public Button button;
+    private Button button;
 
     private bool m_isPressed;
     private string currentSkin;
 
+    //COMMENT:28/03/2022:HEURTEL: applies the sprite of the skin on the button
     public void displaySkin(string skinPath)
     {
         Sprite skin = Resources.Load<Sprite>(skinPath);
@@ -22,6 +23,7 @@ public class ButtonHandler : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
     {
         m_isPressed = true;
     }
+
     public void OnPointerUp(PointerEventData data)
     {
         m_isPressed = false;

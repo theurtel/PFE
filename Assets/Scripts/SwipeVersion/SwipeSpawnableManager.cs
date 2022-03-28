@@ -10,43 +10,40 @@ using UnityEngine.XR.ARSubsystems;
 public class SwipeSpawnableManager : MonoBehaviour
 {
 
-    public ReadCSV readCSV;
-    ARRaycastManager m_RaycastManager;
-    GameObject spawnedObject;
-    bool isSpawned = false;
-    int iter=0;
+    public CSVHandler readCSV;
+    private ARRaycastManager m_RaycastManager;
+    private GameObject spawnedObject;
+    private bool isSpawned = false;
+    private int iter=0;
 
     private Vector2 touchPosition;
     private Vector3 spawnPos;
     private Quaternion spawnRot;
 
     [SerializeField]
-    GameObject button; 
+    private GameObject button; 
 
-    GameObject spawnablePrefab;
+    private GameObject spawnablePrefab;
     private int prefabID=0;
 
     private List<GameObject> prefabs = new List<GameObject>();
     public SwipeEffect swipeEffect;
-    bool _isSwiped = false;
+    private bool _isSwiped = false;
 
-    List<ARRaycastHit> m_Hits = new List<ARRaycastHit>();
+    private List<ARRaycastHit> m_Hits = new List<ARRaycastHit>();
     private int nbPrefabs = 0;
 
-    /////////////////////////////////////////////////////////
-    private bool isAppearingRight = false; //switch on/off the image (if true is showing, if false is hidden)
-    private bool isAppearingWrong = false; //switch on/off the image (if true is showing, if false is hidden)
+    private bool isAppearingRight = false; 
+    private bool isAppearingWrong = false; 
      
     [SerializeField]
-    public Texture2D imageRight; //Texture of the image to show
+    private Texture2D imageRight; 
     [SerializeField]
-    public Texture2D imageWrong; //Texture of the image to show
+    private Texture2D imageWrong;
     
-     public float imageStayTime = 2.0f; //Time the image should stay on screen    
-     private bool _swipeRight;
-     private string name;
+    private float imageStayTime = 2.0f; 
+    private bool _swipeRight;
 
-    //////////////////////////////////////////////////////
     
     private void Awake()
     {     
@@ -66,7 +63,7 @@ public class SwipeSpawnableManager : MonoBehaviour
 
     
 
-    bool TryGetTouchPosition(out Vector2 touchPosition)
+    private bool TryGetTouchPosition(out Vector2 touchPosition)
     {
         if(Input.touchCount > 0)
         {
@@ -87,7 +84,6 @@ public class SwipeSpawnableManager : MonoBehaviour
             isAppearingRight = false;
             isAppearingWrong = false;
             swipeEffect.unSwipe();
-            name = spawnedObject.name;
             Destroy(spawnedObject);
             isSpawned = false;
             StartCoroutine("displayRightOrWrong");
@@ -123,7 +119,7 @@ public class SwipeSpawnableManager : MonoBehaviour
     }
 
 
-    public IEnumerator displayRightOrWrong()
+    private IEnumerator displayRightOrWrong()
     {
         if((readCSV.isHealthy(prefabID) && _swipeRight) || (!readCSV.isHealthy(prefabID) && !_swipeRight))
         {
@@ -149,7 +145,7 @@ public class SwipeSpawnableManager : MonoBehaviour
         yield return null;
     }
 
-    void OnGUI() 
+    private void OnGUI() 
     { 
         if(isAppearingRight){
             GUI.DrawTexture ( new Rect (0,300, Screen.width, Screen.width), imageRight);

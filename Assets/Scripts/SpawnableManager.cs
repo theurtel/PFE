@@ -19,14 +19,14 @@ public class SpawnableManager : MonoBehaviour
     private TextMeshProUGUI txtGold;
     private TextMeshProUGUI txtStreak;
 
-    public ReadCSV readCSV;
+    public CSVHandler readCSV;
     public DataHandler dataHandler;
 
     private int streak=0;
     private string currentDate = DateTime.Now.ToShortDateString();
 
     [SerializeField]
-    GameObject camera;
+    private GameObject camera;
 
     private Vector3 origCamPos;
     private Vector3 prevCamPos;
@@ -50,7 +50,7 @@ public class SpawnableManager : MonoBehaviour
     private Vector2 touchPosition;
 
     [SerializeField]
-    GameObject button; 
+    private GameObject button; 
 
     private GameObject spawnablePrefab;
     private int prefabID=0;
@@ -67,14 +67,15 @@ public class SpawnableManager : MonoBehaviour
     private bool isAppearingWrong = false;
      
     [SerializeField]
-    public Texture2D imageRight;
+    private Texture2D imageRight;
     [SerializeField]
-    public Texture2D imageWrong;
+    private Texture2D imageWrong;
     
     private float imageStayTime = 2.0f;
     private bool _swipeRight;
     private string name;
     
+
     private void Awake()
     {
         dataHandler.loadData();
@@ -93,7 +94,6 @@ public class SpawnableManager : MonoBehaviour
         buttonPressed = false;
 
         readCSV.read("list");
-
         nbPrefabs = readCSV.getSize();
 
         string path;
@@ -103,29 +103,13 @@ public class SpawnableManager : MonoBehaviour
         }
 
         m_RaycastManager = GetComponent<ARRaycastManager>();
-        prefabID = UnityEngine.Random.Range(0, readCSV.getSize());
-        spawnablePrefab = prefabs[prefabID];
-    }
-
-    
-    //:COMMENT:16/03/2022:PIET: récupère la position du toucher - retourne false si on ne touche pas, true sinon
-    bool TryGetTouchPosition(out Vector2 touchPosition)
-    {
-        if(Input.touchCount > 0)
-        {
-            touchPosition = Input.GetTouch(0).position;
-            return true;
-        }
-
-        touchPosition = default;
-        return false;
     }
 
 
 
     private void Update()
     {
-        //:COMMENT:20/03/2022:HEURTEL: si l'animation doit s'activer, on rapproche ou éloigne l'objet de la caméra selon si on le mange ou non
+        //:COMMENT:20/03/2022:HEURTEL: if the animation has to be enabled, brings the object closer to or farther from the camera depending on if it is getting eaten or not
         if(anim && eat) 
         {
             if(spawnedObject.transform.position != validPos - axis*origDist) 
@@ -155,10 +139,10 @@ public class SpawnableManager : MonoBehaviour
         }
 
 
-        //COMMENT:17/03/2022:HEURTEL: si le bouton est pressé et qu'un objet est placé
+        //COMMENT:17/03/2022:HEURTEL: if the button is pressed and an object is already placed
         if(buttonHandler.isPressed() && isSpawned)
         {   
-            //COMMENT:17/03/2022:HEURTEL: si c'est la première frame ou le bouton est pressé, on stocke la position de départ de la caméra, la distance et l'axe de départ entre l'objet et la caméra
+            //COMMENT:17/03/2022:HEURTEL: if it is the first frame where the button is pressed, stores the original position of the camera, the distance and the axis between the object and the camera
             if(!buttonPressed)
             {
                 origCamPos = camera.transform.position;
@@ -170,7 +154,7 @@ public class SpawnableManager : MonoBehaviour
 
             eat = false ;
 
-            //COMMENT:18/03/2022:HEURTEL: on cherche à maintenir la distance de départ entre la caméra et l'objet : si la distance actuelle est inférieure, c'est qu'on se rapproche de l'objet donc va l'éloigner le long de l'axe (et inversement)
+            //COMMENT:18/03/2022:HEURTEL: we're looking to maintain the original distance between the camera and the object : if the current distance is shorter, we're getting closer to the object so we're going to move it farther along the axis and vice versa
             if(origDist>Vector3.Distance(spawnedObject.transform.position, camera.transform.position)) 
             {
                 spawnedObject.transform.position += axis * Vector3.Distance(prevCamPos, camera.transform.position);
@@ -183,7 +167,7 @@ public class SpawnableManager : MonoBehaviour
 
             prevCamPos = camera.transform.position;
 
-            //COMMENT:19/03/2022:HEURTEL: si l'objet a parcouru une certaine distance, on active la routine de validation et on prépare l'animation de rapprochement/éloignement de l'objet (cf début de Update) sur le référentiel caméra objet actuel
+            //COMMENT:19/03/2022:HEURTEL: if the object reached a certain distance, we anable the validation coroutine and set up the movement of the object (cf beginning of Update) according to the current camera and object positions
             if(Vector3.Distance(spawnedObject.transform.position, spawnPos) > Vector3.Distance(spawnPos, origCamPos)/1.5f)
             {
                 anim = true;
@@ -196,7 +180,7 @@ public class SpawnableManager : MonoBehaviour
             }
         }
 
-        //COMMENT:17/03/2022:HEURTEL: si on relâche le bouton, l'objet retourne à sa position de départ
+        //COMMENT:17/03/2022:HEURTEL: if the user releases the button, the object goes back to his original position
         if(!buttonHandler.isPressed() && isSpawned && buttonPressed)        
         {
             spawnedObject.transform.position = spawnPos;
@@ -206,11 +190,11 @@ public class SpawnableManager : MonoBehaviour
         if(!TryGetTouchPosition(out Vector2 touchPosition))
             return;
 
-        //:COMMENT:17/03/2022:HEURTEL: si on touche le bas de l'écran, on retourne directement pour éviter un conflit avec le bouton
+        //:COMMENT:17/03/2022:HEURTEL: if the user touches the bottom of the screen, returns to avoid any conflict with the button
         if(touchPosition.y<button.transform.position.y*2)
             return;
 
-        //:COMMENT:16/03/2022:PIET: si on n'a pas d'objet affiché, on l'instancie à la position de toucher, sinon on déplace l'objet existant
+        //:COMMENT:16/03/2022:PIET: if there is no displayed object, instantiates it on the touch position, else moves the existing object
         if(m_RaycastManager.Raycast(touchPosition, m_Hits, TrackableType.PlaneWithinPolygon))
         {
             var hitPosition = m_Hits[0].pose;
@@ -232,7 +216,23 @@ public class SpawnableManager : MonoBehaviour
         }
     }
 
-    //:COMMENT:16/03/2022:HEURTEL: si on fait le bon ou le mauvais choix, change le booléen correspondant pour activer l'affichage d'image dans OnGui pendant le temps défini par imageStayTime
+
+    
+    //:COMMENT:16/03/2022:PIET: loads the touch position - returns false si the screen is not being touched, true else
+    bool TryGetTouchPosition(out Vector2 touchPosition)
+    {
+        if(Input.touchCount > 0)
+        {
+            touchPosition = Input.GetTouch(0).position;
+            return true;
+        }
+
+        touchPosition = default;
+        return false;
+    }
+
+
+    //:COMMENT:16/03/2022:HEURTEL: if the user makes the good or bad choice, changes the boolean to activate the display of the image in OnGui during the time defined by imageStayTime
     public IEnumerator displayRightOrWrong()
     {
         if((readCSV.isHealthy(prefabID) && eat) || (!readCSV.isHealthy(prefabID) && !eat))
@@ -276,7 +276,8 @@ public class SpawnableManager : MonoBehaviour
         yield return null;
     }
 
-    //:COMMENT:16/03/2022:HEURTEL: affiche une image selon le résultat right/wrong
+
+    //:COMMENT:16/03/2022:HEURTEL: displays an image depending on the result right/wrong
     void OnGUI() 
     { 
         if(isAppearingRight){

@@ -7,7 +7,7 @@ using Unity.IO;
 using System.Linq;
 
 
-public class ReadCSV : MonoBehaviour
+public class CSVHandler : MonoBehaviour
 {
     private List<string> names = new List<string>();
     private List<bool> healths = new List<bool>();
@@ -15,6 +15,7 @@ public class ReadCSV : MonoBehaviour
     private List<int> prices = new List<int>();
     private int size=0;
 
+    //COMMENT:24/03/2022:HEURTEL: loads the csv and stores its values in the attributes
     public void read(string path)
     {
         size=0;

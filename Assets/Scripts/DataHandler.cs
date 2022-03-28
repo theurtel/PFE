@@ -8,22 +8,26 @@ public class DataHandler : MonoBehaviour
     private int score;
     private int gold;
     private string previousStreakDate;
-    private string currentSkin;
-    private string unlockedSkins;
+    //COMMENT:25/03/2022:HEURTEL: name of the current skin sprite
+    private string currentSkin;  
+    //COMMENT:25/03/2022:HEURTEL: unlockedSkins is a string where each character's index matches the index of the skin in skin.csv - if the char is 1, the skin is unlocked, if it's 0, the skin is locked       
+    private string unlockedSkins;       
 
-    public ReadCSV readCSV;
+    public CSVHandler readCSV;
 
-
+    //COMMENT:25/03/2022:HEURTEL: load Data from the PlayerPrefs and assign the values to the respective attributes
     public void loadData()
     {
         score = PlayerPrefs.GetInt("Score");
         gold = PlayerPrefs.GetInt("Gold");
         previousStreakDate = PlayerPrefs.GetString("Date");
 
+        //COMMENT:25/03/2022:HEURTEL: if there is no existing "Skin" key (it's the first time the app is started), assign the default skin
         if(!PlayerPrefs.HasKey("Skin"))
             PlayerPrefs.SetString("Skin", "default");
         currentSkin = PlayerPrefs.GetString("Skin");
 
+        //COMMENT:25/03/2022:HEURTEL: if it's the first time the app is started, assign the value 1 for the first skin of the CSV (default skin) and 0 for the others
         if(!PlayerPrefs.HasKey("UnlockedSkins"))
         {
             readCSV.read("skins");
@@ -58,7 +62,7 @@ public class DataHandler : MonoBehaviour
     }
 
 
-
+    //COMMENT:25/03/2022:HEURTEL: this method says if the user already had his daily bonus
     public bool isNewDay(string currentDate)
     {
         if(previousStreakDate != currentDate)
@@ -66,6 +70,7 @@ public class DataHandler : MonoBehaviour
         return false;
     }
 
+    //COMMENT:25/03/2022:HEURTEL: this method is called when the user gets his daily bonus, and saves the current date as the date he got his last bonus
     public void saveDate(string currentDate)
     {
         previousStreakDate = currentDate;
