@@ -46,6 +46,8 @@ Dans Unity : File -> Build Settings -> Android. La première fois, cliquer sur "
 
 Optionnel : brancher son smartphone et le sélectionner dans "Run Device" pour une meilleur compatibilité.
 
+Vérifier que les scènes sont bien chargées. Sinon, les glisser-déposer dans le rectangle "Scenes In Buid" en mettant la scène Menu à l'index 0.
+
 Puis cliquer sur Build et déplacer le fichier apk obtenu sur le téléphone. L'ouvrir pour installer l'application.
 
 ## Utilisation
