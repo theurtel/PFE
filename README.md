@@ -30,6 +30,8 @@ du téléphone ou de la main).
 Développé sous Unity en C# avec le toolkit ARFoundation pour une utilisation sous Android.
 
 ## Installation
+apk proposé directement, sinon :
+
 ### Prérequis
 
 Unity (projet réalisé sur la version 2020.3.26f1)
